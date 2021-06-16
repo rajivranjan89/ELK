@@ -1,0 +1,37 @@
+import pandas as pd
+import requests
+import json
+import numpy as np
+from elasticsearch import helpers
+from elasticsearch import client
+import datetime
+
+class ELasticMigration:
+  def __init__(self):
+    self.es = Elasticsearch(host='',port=9200,http_auth=('elastic','test123'))
+    self.index = client.IndicesClient(self.es)
+  
+  def handler(self):
+    df = pd.read_excel('')
+    print(len(df))
+    df = df[['col1','col2']]
+    data = df.to_dict(orient='record')
+    
+    for doc in data:
+      doc.update({"_op_type": "index"})
+      doc.update({"_index": "Index_name"})
+      
+      # Create Index 
+      self.es.indices.create(index='index_name')
+      
+      # Delete Index
+      #self.es.delete_by_query(index="index_name", body={"query": {"match_all": {}}})
+      
+      
+      helpers.bulk(self.es, data, index='index_name')
+      print('done')
+      
+     
+ if __name__=='__main__':
+  a = ElasticMigration()
+  a.handler()
